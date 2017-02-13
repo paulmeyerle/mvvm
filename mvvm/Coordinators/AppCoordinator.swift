@@ -15,10 +15,11 @@ class AppCoordinator: CoordinatorType {
     let baseViewController = UINavigationController().then {
         $0.navigationBar.isTranslucent = false
     }
+    
+    let todoService = RxMoyaProvider<TodoService>()
 
     init() {
-        let todoService = RxMoyaProvider<TodoService>()
-        let viewModel = TodoListViewModel(todoService: todoService, appCoordinator: self)
+        let viewModel = TodoListViewModel(todoService: self.todoService, appCoordinator: self)
         let listController = TodoListViewController(viewModel: viewModel)
         self.baseViewController.pushViewController(listController, animated: false)
     }
@@ -28,7 +29,7 @@ class AppCoordinator: CoordinatorType {
     }
     
     func addTodo() {
-        let viewModel = AddTodoViewModel()
+        let viewModel = AddTodoViewModel(todoService: self.todoService)
         let viewController = AddTodoItemViewController(viewModel: viewModel)
         self.baseViewController.pushViewController(viewController, animated: true)
     }

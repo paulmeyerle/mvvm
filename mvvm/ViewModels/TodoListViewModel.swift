@@ -10,6 +10,9 @@ import Foundation
 import RxSwift
 import RxCocoa
 import RxDataSources
+import Moya
+import Moya_ModelMapper
+import Mapper
 
 typealias TodoListSection = SectionModel<String, TodoModel>
 
@@ -27,19 +30,27 @@ struct TodoListViewModel:TodoListViewModelType {
     
     let viewDidLoad = PublishSubject<Void>()
     let viewDidDeallocate = PublishSubject<Void>()
-    let taskService: TaskServiceType
+    let todoService: RxMoyaProvider<TodoService>
     let sections: Driver<[TodoListSection]>
     let itemDidSelect = PublishSubject<TodoModel>()
     let addButtonItemDidTap = PublishSubject<Void>()
     
-    init(taskService: TaskServiceType, appCoordinator: AppCoordinator) {
-        self.taskService = taskService
+    init(todoService: RxMoyaProvider<TodoService>, appCoordinator: AppCoordinator) {
+        self.todoService = todoService
         self.appCoordinator = appCoordinator
         
-        self.sections = self.taskService.fetchAll().map { todoItems in
-            let section = TodoListSection(model: "title", items: todoItems)
-            return [section]
-        }.asDriver(onErrorJustReturn: [])
+        self.sections = self.todoService.request(.fetchAll)
+            .debug()
+            .mapArrayOptional(type: TodoModel.self)
+            .map({ todos in
+                guard let todos = todos else {
+                    return []
+                }
+                
+                let section = TodoListSection(model: "title", items: todos)
+                return [section]
+            })
+            .asDriver(onErrorJustReturn: [])
         
         self.addButtonItemDidTap
             .takeUntil(self.viewDidDeallocate)

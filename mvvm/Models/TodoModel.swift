@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import Mapper
 
-struct TodoModel {
+struct TodoModel: Mappable {
     let id: String
     let title: String
     let description: String
@@ -19,5 +20,12 @@ struct TodoModel {
         self.title = title
         self.description = description
         self.isDone = false
+    }
+    
+    init(map: Mapper) throws {
+        try id = map.from("id")
+        try title = map.from("title")
+        try description = map.from("description")
+        try isDone = map.from("isDone")
     }
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 import Then
+import Moya
 
 class AppCoordinator: CoordinatorType {
     
@@ -16,8 +17,8 @@ class AppCoordinator: CoordinatorType {
     }
 
     init() {
-        let taskService = TodoService()
-        let viewModel = TodoListViewModel(taskService: taskService, appCoordinator: self)
+        let todoService = RxMoyaProvider<TodoService>()
+        let viewModel = TodoListViewModel(todoService: todoService, appCoordinator: self)
         let listController = TodoListViewController(viewModel: viewModel)
         self.baseViewController.pushViewController(listController, animated: false)
     }

@@ -8,9 +8,13 @@ target 'mvvm' do
   # Pods for mvvm
   pod 'RxSwift', '~> 3.0'
   pod 'RxCocoa', '~> 3.0'
+  pod 'RxOptional'
   pod 'RxDataSources', '~> 1.0'
   pod 'SnapKit', '~> 3.1.2'
   pod 'Then', '~> 2.1'
+  pod 'ModelMapper'
+  pod 'Moya/RxSwift'
+  pod 'Moya-ModelMapper/RxSwift', '4.0.0'
 
   target 'mvvmTests' do
     inherit! :search_paths

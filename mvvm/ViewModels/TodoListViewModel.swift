@@ -39,18 +39,17 @@ struct TodoListViewModel:TodoListViewModelType {
         self.todoService = todoService
         self.appCoordinator = appCoordinator
         
-        self.sections = self.todoService.request(.fetchAll)
-            .debug()
-            .mapArrayOptional(type: TodoModel.self)
-            .map({ todos in
-                guard let todos = todos else {
-                    return []
-                }
-                
-                let section = TodoListSection(model: "title", items: todos)
-                return [section]
-            })
+        let tasks: Observable<[TodoModel]> = self.todoService.request(.fetchAll)
+            .debug("fetch tasks")
+            .mapArray(type: TodoModel.self)
+        
+        self.sections = tasks
             .asDriver(onErrorJustReturn: [])
+            .flatMapLatest { todos in
+                // convert the todo models into a section for the tableview
+                let section = TodoListSection(model: "title", items: todos)
+                return .just([section])
+            }
         
         self.addButtonItemDidTap
             .takeUntil(self.viewDidDeallocate)

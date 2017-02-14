@@ -10,13 +10,13 @@ import Foundation
 import Mapper
 
 struct TodoModel: Mappable {
-    let id: String
+    let id: Int
     let title: String
     let description: String
     let isDone: Bool
     
     init(title: String, description: String) {
-        self.id = UUID.init().uuidString
+        self.id = 0
         self.title = title
         self.description = description
         self.isDone = false

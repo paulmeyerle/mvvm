@@ -80,5 +80,6 @@ class TodoListViewController: BaseViewController {
         self.tableview.rx.modelSelected(TodoModel.self)
             .bindTo(viewModel.itemDidSelect)
             .addDisposableTo(self.disposeBag)
+        
     }
 }

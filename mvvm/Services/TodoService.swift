@@ -13,7 +13,7 @@ import Moya
 
 enum TodoService {
     case fetchAll
-    case fetchTodo(id: String)
+    case fetchTodo(id: Int)
     case createTodo(todo: TodoModel)
     case updateTodo(todo: TodoModel)
 }

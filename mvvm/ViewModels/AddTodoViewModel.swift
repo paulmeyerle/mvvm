@@ -22,8 +22,8 @@ protocol AddTodoViewModelType {
 
 struct AddTodoViewModel: AddTodoViewModelType {
     fileprivate let disposeBag = DisposeBag()
-    private let todoService: RxMoyaProvider<TodoService>
-    
+    fileprivate let todoService: RxMoyaProvider<TodoService>
+    fileprivate let appCoordinator: AppCoordinator
     
     let saveButtonItemDidTap = PublishSubject<Void>()
     let viewDidDeallocate = PublishSubject<Void>()
@@ -32,8 +32,9 @@ struct AddTodoViewModel: AddTodoViewModelType {
     var description = Variable<String?>("")
     var isValid: Driver<Bool>
     
-    init(todoService: RxMoyaProvider<TodoService>) {
+    init(todoService: RxMoyaProvider<TodoService>, appCoordinator: AppCoordinator) {
         self.todoService = todoService
+        self.appCoordinator = appCoordinator
         
         self.isValid = title
             .asObservable()
@@ -47,22 +48,23 @@ struct AddTodoViewModel: AddTodoViewModelType {
         self.saveButtonItemDidTap
             .takeUntil(self.viewDidDeallocate)
             .withLatestFrom(formData)
-            .subscribe(onNext: { (title, description) in
-                // Save the item.  then inform the corrodinator that we are DONE
+            .flatMapLatest({ (title, description) -> Observable<Response> in
                 let todo = TodoModel(title: title!, description: description!)
-                todoService.request(.createTodo(todo: todo))
+                return todoService.request(.createTodo(todo: todo))
                     .debug("create user")
-                    .subscribe { event in
-                        switch event {
-                        case let .next(response):
-                            _ = response
-                        case let .error(error):
-                            _ = error
-                        default:
-                            break
-                        }
-                    }
             })
+            .mapObject(type: TodoModel.self)
+            .subscribe { event in
+                switch event {
+                case .next:
+                    appCoordinator.viewTodos()
+                case .error(let error):
+                    _ = error
+                    // show error?
+                default:
+                    break
+                }
+            }
             .addDisposableTo(self.disposeBag)
     }
 }

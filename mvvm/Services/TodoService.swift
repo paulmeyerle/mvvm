@@ -80,5 +80,5 @@ extension TodoService: TargetType {
             return .request
         }
     }
-    
 }
+

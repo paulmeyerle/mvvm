@@ -10,9 +10,12 @@ import UIKit
 import Then
 import SnapKit
 import RxSwift
+import RxCocoa
 import RxDataSources
 
 class TodoListViewController: BaseViewController {
+    
+    let refreshControl = UIRefreshControl()
     
     let tableview = UITableView().then {
         $0.register(TodoCell.self, forCellReuseIdentifier: "cell")
@@ -37,17 +40,25 @@ class TodoListViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.navigationItem.title = "Todo Items"
         self.setupLayout()
         self.configure()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.refreshData()
+    }
+    
     private func setupLayout() {
         // Navigation Bar
         self.navigationItem.rightBarButtonItem = self.addButtonItem
+
+        self.refreshControl.addTarget(self, action: #selector(TodoListViewController.refreshData), for: .valueChanged)
         
-        // Layout tableview
+        self.tableview.addSubview(self.refreshControl)
         self.view.addSubview(self.tableview)
         self.tableview.snp.makeConstraints { (maker) in
             maker.edges.equalTo(self.view)
@@ -65,6 +76,10 @@ class TodoListViewController: BaseViewController {
         self.dataSource.canEditRowAtIndexPath = { _ in true }
         self.dataSource.canMoveRowAtIndexPath = { _ in true }
         
+        self.viewModel.isRefreshing
+            .drive(self.refreshControl.rx.isRefreshing)
+            .addDisposableTo(self.disposeBag)
+        
         self.viewModel.sections
             .drive(self.tableview.rx.items(dataSource: self.dataSource))
             .addDisposableTo(self.disposeBag)
@@ -81,5 +96,9 @@ class TodoListViewController: BaseViewController {
             .bindTo(viewModel.itemDidSelect)
             .addDisposableTo(self.disposeBag)
         
+    }
+    
+    func refreshData() {
+        self.viewModel.loadTodos()
     }
 }

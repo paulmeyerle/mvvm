@@ -29,7 +29,7 @@ class AppCoordinator: CoordinatorType {
     }
     
     func addTodo() {
-        let viewModel = AddTodoViewModel(todoService: self.todoService)
+        let viewModel = AddTodoViewModel(todoService: self.todoService, appCoordinator: self)
         let viewController = AddTodoItemViewController(viewModel: viewModel)
         self.baseViewController.pushViewController(viewController, animated: true)
     }
@@ -38,5 +38,9 @@ class AppCoordinator: CoordinatorType {
         let viewModel = ViewTodoViewModel(todo: todo)
         let viewController = ViewTodoItemViewController(viewModel: viewModel)
         self.baseViewController.pushViewController(viewController, animated: true)
+    }
+    
+    func viewTodos() {
+        self.baseViewController.popToRootViewController(animated: true)
     }
 }

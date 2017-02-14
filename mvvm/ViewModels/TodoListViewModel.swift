@@ -62,8 +62,8 @@ struct TodoListViewModel:TodoListViewModelType {
         
         self.itemDidSelect
             .takeUntil(self.viewDidDeallocate)
-            .subscribe(onNext: { model in
-                appCoordinator.viewTodo(todo: model)
+            .subscribe(onNext: { todo in
+                appCoordinator.viewTodo(todo: todo)
             })
             .addDisposableTo(self.disposeBag)
         

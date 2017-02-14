@@ -22,10 +22,13 @@ class AppCoordinator: CoordinatorType {
         let viewModel = TodoListViewModel(todoService: self.todoService, appCoordinator: self)
         let listController = TodoListViewController(viewModel: viewModel)
         self.baseViewController.pushViewController(listController, animated: false)
+        
+        self.start()
     }
 
     func start() {
         // NOOP
+
     }
     
     func addTodo() {
@@ -42,5 +45,8 @@ class AppCoordinator: CoordinatorType {
     
     func viewTodos() {
         self.baseViewController.popToRootViewController(animated: true)
+        if let viewController = baseViewController.topViewController as? TodoListViewController {
+            viewController.refreshData()
+        }
     }
 }

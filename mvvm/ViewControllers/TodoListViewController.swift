@@ -44,11 +44,6 @@ class TodoListViewController: BaseViewController {
         self.navigationItem.title = "Todo Items"
         self.setupLayout()
         self.configure()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
         self.refreshData()
     }
     

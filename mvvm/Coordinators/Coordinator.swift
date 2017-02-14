@@ -6,8 +6,9 @@
 //  Copyright © 2017 Jetsetter. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 protocol CoordinatorType {
     func start()
+    func stop()
 }

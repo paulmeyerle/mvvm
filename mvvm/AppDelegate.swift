@@ -7,18 +7,24 @@
 //
 
 import UIKit
+import Moya
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    let appCoordinator = AppCoordinator()
+    
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        let navigationController = UINavigationController()
+        let todoService = RxMoyaProvider<TodoService>()
+        let appCoordinator = AppCoordinator(navigationController: navigationController, todoService: todoService)
         window = UIWindow()
-        window?.rootViewController = appCoordinator.baseViewController
+        window?.rootViewController = navigationController
         window?.backgroundColor = UIColor.white
         window?.makeKeyAndVisible()
 
+        appCoordinator.start()
+        
         return true
     }
 

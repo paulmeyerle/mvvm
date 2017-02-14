@@ -12,40 +12,45 @@ import Moya
 
 class AppCoordinator: CoordinatorType {
     
-    let baseViewController = UINavigationController().then {
-        $0.navigationBar.isTranslucent = false
+    let navigationController: UINavigationController
+    let todoService: RxMoyaProvider<TodoService>
+    
+    init(navigationController: UINavigationController, todoService: RxMoyaProvider<TodoService>) {
+        self.navigationController = navigationController
+        self.todoService = todoService
+        
+        self.setup()
     }
     
-    let todoService = RxMoyaProvider<TodoService>()
-
-    init() {
-        let viewModel = TodoListViewModel(todoService: self.todoService, appCoordinator: self)
-        let listController = TodoListViewController(viewModel: viewModel)
-        self.baseViewController.pushViewController(listController, animated: false)
-        
-        self.start()
+    func setup() {
+        self.navigationController.navigationBar.isTranslucent = false
     }
 
     func start() {
-        // NOOP
-
+        let viewModel = TodoListViewModel(todoService: self.todoService, appCoordinator: self)
+        let listController = TodoListViewController(viewModel: viewModel)
+        self.navigationController.pushViewController(listController, animated: false)
+    }
+    
+    func stop() {
+        self.navigationController.popViewController(animated: true)
     }
     
     func addTodo() {
         let viewModel = AddTodoViewModel(todoService: self.todoService, appCoordinator: self)
         let viewController = AddTodoItemViewController(viewModel: viewModel)
-        self.baseViewController.pushViewController(viewController, animated: true)
+        self.navigationController.pushViewController(viewController, animated: true)
     }
     
     func viewTodo(todo: TodoModel) {
         let viewModel = ViewTodoViewModel(todo: todo)
         let viewController = ViewTodoItemViewController(viewModel: viewModel)
-        self.baseViewController.pushViewController(viewController, animated: true)
+        self.navigationController.pushViewController(viewController, animated: true)
     }
     
     func viewTodos() {
-        self.baseViewController.popToRootViewController(animated: true)
-        if let viewController = baseViewController.topViewController as? TodoListViewController {
+        self.navigationController.popToRootViewController(animated: true)
+        if let viewController = navigationController.topViewController as? TodoListViewController {
             viewController.refreshData()
         }
     }

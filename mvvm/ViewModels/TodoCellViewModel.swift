@@ -22,8 +22,8 @@ struct TodoCellViewModel: TodoCellViewModelType {
     let accessoryType: UITableViewCellAccessoryType
 
     init(todo: TodoModel) {
-        self.title = todo.title
-        self.titleColor = todo.isDone ? .lightGray : .black
-        self.accessoryType = todo.isDone ? .checkmark : .none
+        title = todo.title
+        titleColor = todo.isDone ? .lightGray : .black
+        accessoryType = todo.isDone ? .checkmark : .none
     }
 }

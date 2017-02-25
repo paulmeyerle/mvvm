@@ -36,16 +36,16 @@ struct AddTodoViewModel: AddTodoViewModelType {
         self.todoService = todoService
         self.appCoordinator = appCoordinator
 
-        self.isValid = title
+        isValid = title
             .asObservable()
             .map { text in text?.isEmpty == false }
             .startWith(false)
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
 
-        let formData = Observable.combineLatest(self.title.asObservable(), self.description.asObservable()) { ($0, $1) }
+        let formData = Observable.combineLatest(title.asObservable(), description.asObservable()) { ($0, $1) }
 
-        self.saveButtonItemDidTap
+        saveButtonItemDidTap
             .takeUntil(viewDidDeallocate)
             .withLatestFrom(formData)
             .flatMapLatest({ (title, description) -> Observable<Response> in
@@ -65,6 +65,6 @@ struct AddTodoViewModel: AddTodoViewModelType {
                     break
                 }
             }
-            .addDisposableTo(self.disposeBag)
+            .addDisposableTo(disposeBag)
     }
 }

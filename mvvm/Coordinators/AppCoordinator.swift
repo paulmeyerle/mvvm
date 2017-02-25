@@ -19,31 +19,31 @@ class AppCoordinator: CoordinatorType {
         self.navigationController = navigationController
         self.todoService = todoService
 
-        self.setup()
+        setup()
     }
 
     func setup() {
-        self.navigationController.navigationBar.isTranslucent = false
+        navigationController.navigationBar.isTranslucent = false
     }
 
     func start() {
-        let viewModel = TodoListViewModel(todoService: self.todoService, appCoordinator: self)
+        let viewModel = TodoListViewModel(todoService: todoService, appCoordinator: self)
         let listController = TodoListViewController(viewModel: viewModel)
-        self.navigationController.pushViewController(listController, animated: false)
+        navigationController.pushViewController(listController, animated: false)
     }
 
     func stop() {
-        self.navigationController.popViewController(animated: true)
+        navigationController.popViewController(animated: true)
     }
 
     func addTodo() {
-        let viewModel = AddTodoViewModel(todoService: self.todoService, appCoordinator: self)
+        let viewModel = AddTodoViewModel(todoService: todoService, appCoordinator: self)
         let viewController = AddTodoItemViewController(viewModel: viewModel)
-        self.navigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(viewController, animated: true)
     }
 
     func viewTodos() {
-        self.navigationController.popToRootViewController(animated: true)
+        navigationController.popToRootViewController(animated: true)
         if let viewController = navigationController.topViewController as? TodoListViewController {
             viewController.refreshData()
         }

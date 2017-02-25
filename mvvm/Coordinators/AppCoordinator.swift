@@ -11,17 +11,17 @@ import Then
 import Moya
 
 class AppCoordinator: CoordinatorType {
-    
+
     let navigationController: UINavigationController
     let todoService: RxMoyaProvider<TodoService>
-    
+
     init(navigationController: UINavigationController, todoService: RxMoyaProvider<TodoService>) {
         self.navigationController = navigationController
         self.todoService = todoService
-        
+
         self.setup()
     }
-    
+
     func setup() {
         self.navigationController.navigationBar.isTranslucent = false
     }
@@ -31,23 +31,17 @@ class AppCoordinator: CoordinatorType {
         let listController = TodoListViewController(viewModel: viewModel)
         self.navigationController.pushViewController(listController, animated: false)
     }
-    
+
     func stop() {
         self.navigationController.popViewController(animated: true)
     }
-    
+
     func addTodo() {
         let viewModel = AddTodoViewModel(todoService: self.todoService, appCoordinator: self)
         let viewController = AddTodoItemViewController(viewModel: viewModel)
         self.navigationController.pushViewController(viewController, animated: true)
     }
-    
-    func viewTodo(todo: TodoModel) {
-        let viewModel = ViewTodoViewModel(todo: todo)
-        let viewController = ViewTodoItemViewController(viewModel: viewModel)
-        self.navigationController.pushViewController(viewController, animated: true)
-    }
-    
+
     func viewTodos() {
         self.navigationController.popToRootViewController(animated: true)
         if let viewController = navigationController.topViewController as? TodoListViewController {

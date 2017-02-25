@@ -8,39 +8,31 @@
 
 import UIKit
 
-class TodoCell : UITableViewCell {
-    
-    let stackView = UIStackView().then {
-        $0.axis = .vertical
-    }
-    
+class TodoCell: UITableViewCell {
+
     let titleLabel = UILabel()
-    let descriptionLabel = UILabel()
-    
+
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        self.setupLayout()
+
+        setupLayout()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func configure(viewModel: TodoCellViewModelType) {
-        self.titleLabel.text = viewModel.title
-        self.descriptionLabel.text = viewModel.description
-        self.accessoryType = viewModel.accessoryType
-    }
-    
+
     private func setupLayout() {
-        self.contentView.addSubview(self.stackView)
-        
-        self.stackView.snp.makeConstraints { (maker) in
-            maker.edges.equalTo(self.contentView)
+        contentView.addSubview(titleLabel)
+
+        titleLabel.snp.makeConstraints { (maker) in
+            maker.edges.equalToSuperview().inset(15)
         }
-        
-        self.stackView.addArrangedSubview(self.titleLabel)
-        self.stackView.addArrangedSubview(self.descriptionLabel)
+    }
+
+    func configure(viewModel: TodoCellViewModelType) {
+        titleLabel.text = viewModel.title
+        titleLabel.textColor = viewModel.titleColor
+        accessoryType = viewModel.accessoryType
     }
 }

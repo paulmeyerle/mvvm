@@ -16,13 +16,14 @@ enum TodoService {
     case fetchTodo(id: Int)
     case createTodo(todo: TodoModel)
     case updateTodo(todo: TodoModel)
+    case deleteTodo(id: Int)
 }
 
 extension TodoService: TargetType {
     var baseURL: URL {
         return URL(string: "http://localhost:3000")!
     }
-    
+
     var path: String {
         switch self {
         case .fetchAll, .createTodo:
@@ -31,36 +32,42 @@ extension TodoService: TargetType {
             return "/tasks/\(id)"
         case .updateTodo(let todo):
             return "/tasks/\(todo.id)"
+        case .deleteTodo(let id):
+            return "/tasks/\(id)"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .fetchAll, .fetchTodo:
             return .get
-        case .createTodo, .updateTodo:
+        case .updateTodo:
+            return .put
+        case .createTodo:
             return .post
+        case .deleteTodo:
+            return .delete
         }
     }
-    
+
     var parameters: [String: Any]? {
         switch self {
-        case .fetchAll, .fetchTodo:
+        case .fetchAll, .fetchTodo, .deleteTodo:
             return nil
         case .createTodo(let todo), .updateTodo(let todo):
             return ["title": todo.title, "description": todo.description, "isDone": todo.isDone]
         }
     }
-    
+
     var parameterEncoding: ParameterEncoding {
         switch self {
-        case .fetchAll, .fetchTodo:
+        case .fetchAll, .fetchTodo, .deleteTodo:
             return URLEncoding.default
         case .createTodo, .updateTodo:
             return JSONEncoding.default
         }
     }
-    
+
     var sampleData: Data {
         switch self {
         case .fetchAll:
@@ -71,14 +78,15 @@ extension TodoService: TargetType {
             return "{\"id\": 100, \"title\": \"\(todo.title)\", \"description\": \"\(todo.description)\", \"isDone\": \(todo.isDone)}".data(using: .utf8)!
         case .updateTodo(let todo):
             return "{\"id\": \(todo.id), \"title\": \"\(todo.title)\", \"description\": \"\(todo.description)\", \"isDone\": \(todo.isDone)}".data(using: .utf8)!
+        case .deleteTodo(let id):
+            return "{}".data(using: .utf8)!
         }
     }
 
     var task: Task {
         switch self {
-        case .createTodo, .updateTodo, .fetchAll, .fetchTodo:
+        case .createTodo, .updateTodo, .fetchAll, .fetchTodo, .deleteTodo:
             return .request
         }
     }
 }
-

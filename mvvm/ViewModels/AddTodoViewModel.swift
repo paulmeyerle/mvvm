@@ -14,7 +14,7 @@ import Moya
 protocol AddTodoViewModelType {
     var viewDidDeallocate: PublishSubject<Void> { get }
     var saveButtonItemDidTap: PublishSubject<Void> { get }
-    
+
     var title: Variable<String?> { get set }
     var description: Variable<String?> { get set }
     var isValid: Driver<Bool> { get }
@@ -24,29 +24,29 @@ struct AddTodoViewModel: AddTodoViewModelType {
     fileprivate let disposeBag = DisposeBag()
     fileprivate let todoService: RxMoyaProvider<TodoService>
     fileprivate let appCoordinator: AppCoordinator
-    
+
     let saveButtonItemDidTap = PublishSubject<Void>()
     let viewDidDeallocate = PublishSubject<Void>()
-    
+
     var title = Variable<String?>("")
     var description = Variable<String?>("")
     var isValid: Driver<Bool>
-    
+
     init(todoService: RxMoyaProvider<TodoService>, appCoordinator: AppCoordinator) {
         self.todoService = todoService
         self.appCoordinator = appCoordinator
-        
+
         self.isValid = title
             .asObservable()
             .map { text in text?.isEmpty == false }
             .startWith(false)
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
-        
+
         let formData = Observable.combineLatest(self.title.asObservable(), self.description.asObservable()) { ($0, $1) }
-        
+
         self.saveButtonItemDidTap
-            .takeUntil(self.viewDidDeallocate)
+            .takeUntil(viewDidDeallocate)
             .withLatestFrom(formData)
             .flatMapLatest({ (title, description) -> Observable<Response> in
                 let todo = TodoModel(title: title!, description: description!)

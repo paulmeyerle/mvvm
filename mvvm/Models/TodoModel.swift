@@ -14,14 +14,14 @@ struct TodoModel: Mappable {
     let title: String
     let description: String
     let isDone: Bool
-    
-    init(title: String, description: String) {
-        self.id = 0
+
+    init(id: Int = 0, title: String, description: String, isDone: Bool = false) {
+        self.id = id
         self.title = title
         self.description = description
-        self.isDone = false
+        self.isDone = isDone
     }
-    
+
     init(map: Mapper) throws {
         try id = map.from("id")
         try title = map.from("title")

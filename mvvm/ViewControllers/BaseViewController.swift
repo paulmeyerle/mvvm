@@ -11,9 +11,9 @@ import UIKit
 class BaseViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = .white
+        view.backgroundColor = .white
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

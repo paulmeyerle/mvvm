@@ -22,74 +22,122 @@ protocol TodoListViewModelType {
 
     // User selected an item in the tableview
     var itemDidSelect: PublishSubject<TodoModel> { get }
-    //
+    var itemDeleted: PublishSubject<IndexPath> { get }
     var addButtonItemDidTap: PublishSubject<Void> { get }
-    
+
     // sections which power the tableview
     var sections: Driver<[TodoListSection]> { get }
-    
+
     var isRefreshing: Driver<Bool> { get }
-    
+
     // Fetch todos from the server
     func loadTodos()
 }
 
-struct TodoListViewModel:TodoListViewModelType {
+struct TodoListViewModel: TodoListViewModelType {
     fileprivate let disposeBag = DisposeBag()
     fileprivate let appCoordinator: AppCoordinator
     fileprivate var todos = Variable<[TodoModel]>([TodoModel]())
-    
+
     var isLoading = Variable<Bool>(false)
-    
+
     let viewDidLoad = PublishSubject<Void>()
     let viewDidDeallocate = PublishSubject<Void>()
     let todoService: RxMoyaProvider<TodoService>
     var sections: Driver<[TodoListSection]>
     let itemDidSelect = PublishSubject<TodoModel>()
+    let itemDeleted = PublishSubject<IndexPath>()
     let addButtonItemDidTap = PublishSubject<Void>()
     let isRefreshing: Driver<Bool>
-    
+
     init(todoService: RxMoyaProvider<TodoService>, appCoordinator: AppCoordinator) {
         self.todoService = todoService
         self.appCoordinator = appCoordinator
-        
-        self.addButtonItemDidTap
-            .takeUntil(self.viewDidDeallocate)
+
+        addButtonItemDidTap
+            .takeUntil(viewDidDeallocate)
             .subscribe(onNext: {
                 appCoordinator.addTodo()
             })
             .addDisposableTo(disposeBag)
-        
-        self.itemDidSelect
-            .takeUntil(self.viewDidDeallocate)
-            .subscribe(onNext: { todo in
-                appCoordinator.viewTodo(todo: todo)
+
+        itemDeleted
+            .takeUntil(viewDidDeallocate)
+            .withLatestFrom(todos.asObservable(), resultSelector: { (indexPath, todos) -> TodoModel in
+                let tastedBeers = todos.filter { $0.isDone }
+                let untastedBeers = todos.filter { !$0.isDone }
+                let group = indexPath.section == 0 ? untastedBeers : tastedBeers
+
+                return group[indexPath.row]
             })
-            .addDisposableTo(self.disposeBag)
-        
-        self.sections = self.todos
+            .flatMapLatest({ todo -> Observable<Response> in
+                return todoService.request(.deleteTodo(id: todo.id))
+                    .debug("delete toto")
+            })
+            .subscribe({ event in
+                switch event {
+                case .next:
+                    appCoordinator.viewTodos()
+                case .error(let error):
+                    _ = error
+                // show error?
+                default:
+                    break
+                }
+            })
+            .addDisposableTo(disposeBag)
+
+        itemDidSelect
+            .takeUntil(viewDidDeallocate)
+            .flatMapLatest({ todo -> Observable<Response> in
+                let doneTodo = TodoModel(id: todo.id,
+                                         title: todo.title,
+                                         description: todo.description,
+                                         isDone: !todo.isDone)
+                return todoService.request(.updateTodo(todo: doneTodo))
+                    .debug()
+            })
+            .mapObject(type: TodoModel.self)
+            .subscribe({ event in
+                switch event {
+                case .next:
+                    appCoordinator.viewTodos()
+                case .error(let error):
+                    _ = error
+                // show error?
+                default:
+                    break
+                }
+            })
+            .addDisposableTo(disposeBag)
+
+        sections = todos
             .asObservable()
             .asDriver(onErrorJustReturn: [])
             .flatMapLatest { todos in
-                let section = TodoListSection(model: "title", items: todos)
-                return .just([section])
+                let tastedBeers = todos.filter { $0.isDone }
+                let untastedBeers = todos.filter { !$0.isDone }
+                let tastedSection = TodoListSection(model: "tasted", items: tastedBeers)
+                let untastedSection = TodoListSection(model: "untasted", items: untastedBeers)
+
+                return .just([untastedSection, tastedSection])
             }
-        
-        self.isRefreshing = self.isLoading
+
+        isRefreshing = isLoading
             .asObservable()
             .asDriver(onErrorJustReturn: false)
     }
-    
+
     func loadTodos() {
-        self.isLoading.value = true
-        self.todoService.request(.fetchAll)
+        isLoading.value = true
+        todoService.request(.fetchAll)
             .debug()
             .mapArray(type: TodoModel.self)
             .subscribe(onNext: { todos in
                 self.isLoading.value = false
                 self.todos.value = todos
             })
-            .addDisposableTo(self.disposeBag)
-        
+            .addDisposableTo(disposeBag)
+
     }
 }

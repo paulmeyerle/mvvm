@@ -9,77 +9,72 @@
 import UIKit
 import RxSwift
 
-
 class AddTodoItemViewController: BaseViewController {
-    
+
     fileprivate let disposeBag = DisposeBag()
- 
+
     let viewModel: AddTodoViewModelType
-    
+
     let stackView = UIStackView().then {
         $0.axis = .vertical
+        $0.spacing = 20
     }
-    
-    let titleInput = UITextField().then {
-        $0.placeholder = "Title"
-    }
-    
-    let descriptionInput = UITextField().then {
-        $0.placeholder = "Description"
-    }
-    
-    let saveButton = UIButton().then {
-        $0.setTitle("Save", for: .normal)
-        $0.setTitleColor(.blue, for: .normal)
-        $0.setTitle("Fill out the form", for: UIControlState.disabled)
 
+    let titleInput = UITextField().then {
+        $0.placeholder = "Beer Name"
+        $0.borderStyle = .roundedRect
     }
-    
+
+    let saveButton = UIButton().then {
+        $0.setTitleColor(.white, for: .normal)
+        $0.setTitle("Save", for: .normal)
+        $0.backgroundColor = .orange
+        $0.layer.cornerRadius = 5
+    }
+
     init(viewModel: AddTodoViewModelType) {
         self.viewModel = viewModel
         super.init()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "Add a Todo"
-        self.setupLayout()
-        self.configure()
+        navigationItem.title = "Add a Beer"
+        setupLayout()
+        configure()
     }
-    
+
     private func setupLayout() {
-        self.view.addSubview(self.stackView)
-        self.stackView.snp.makeConstraints { (maker) in
-            maker.top.equalTo(self.view.snp.top)
-            maker.left.equalTo(self.view.snp.left)
-            maker.right.equalTo(self.view.snp.right)
+        view.addSubview(stackView)
+        stackView.snp.makeConstraints { maker in
+            maker.edges.equalToSuperview().inset(20)
         }
-        self.stackView.addArrangedSubview(self.titleInput)
-        self.stackView.addArrangedSubview(self.descriptionInput)
-        self.stackView.addArrangedSubview(self.saveButton)
-        
+
+        titleInput.snp.makeConstraints { maker in
+            maker.height.equalTo(30)
+        }
+
+        stackView.addArrangedSubview(titleInput)
+        stackView.addArrangedSubview(saveButton)
+        stackView.addArrangedSubview(UIView())
     }
-    
+
     private func configure() {
-        self.titleInput.rx.text
-            .bindTo(self.viewModel.title)
-            .addDisposableTo(self.disposeBag)
-        
-        self.descriptionInput.rx.text
-            .bindTo(self.viewModel.description)
-            .addDisposableTo(self.disposeBag)
-        
-        self.saveButton.rx.tap
-            .bindTo(self.viewModel.saveButtonItemDidTap)
-            .addDisposableTo(self.disposeBag)
-        
-        self.viewModel.isValid
-            .drive(self.saveButton.rx.isEnabled)
-            .addDisposableTo(self.disposeBag)
+        titleInput.rx.text
+            .bindTo(viewModel.title)
+            .addDisposableTo(disposeBag)
+
+        saveButton.rx.tap
+            .bindTo(viewModel.saveButtonItemDidTap)
+            .addDisposableTo(disposeBag)
+
+        viewModel.isValid
+            .drive(saveButton.rx.isEnabled)
+            .addDisposableTo(disposeBag)
     }
-    
+
 }

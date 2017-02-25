@@ -14,16 +14,16 @@ import RxCocoa
 import RxDataSources
 
 class TodoListViewController: BaseViewController {
-    
+
     let refreshControl = UIRefreshControl()
-    
+
     let tableview = UITableView().then {
         $0.register(TodoCell.self, forCellReuseIdentifier: "cell")
         $0.estimatedRowHeight = 50.0
         $0.rowHeight = UITableViewAutomaticDimension
         $0.tableFooterView = UIView()
     }
-    
+
     let disposeBag = DisposeBag()
     let viewModel: TodoListViewModelType
     let dataSource = RxTableViewSectionedReloadDataSource<TodoListSection>()
@@ -32,8 +32,11 @@ class TodoListViewController: BaseViewController {
     init(viewModel: TodoListViewModelType) {
         self.viewModel = viewModel
         super.init()
+
+        navigationItem.title = "Beer Wishlist"
+        navigationItem.rightBarButtonItem = addButtonItem
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -41,59 +44,63 @@ class TodoListViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.title = "Todo Items"
-        self.setupLayout()
-        self.configure()
-        self.refreshData()
+        setupLayout()
+        configure()
+        refreshData()
     }
-    
-    private func setupLayout() {
-        // Navigation Bar
-        self.navigationItem.rightBarButtonItem = self.addButtonItem
 
-        self.refreshControl.addTarget(self, action: #selector(TodoListViewController.refreshData), for: .valueChanged)
-        
-        self.tableview.addSubview(self.refreshControl)
-        self.view.addSubview(self.tableview)
-        self.tableview.snp.makeConstraints { (maker) in
-            maker.edges.equalTo(self.view)
+    private func setupLayout() {
+        refreshControl.addTarget(self, action: #selector(TodoListViewController.refreshData), for: .valueChanged)
+
+        tableview.addSubview(refreshControl)
+        view.addSubview(tableview)
+        tableview.snp.makeConstraints { (maker) in
+            maker.edges.equalToSuperview()
         }
     }
-    
+
     private func configure() {
         // Bind View Model
-        self.dataSource.configureCell = { _, tableView, indexPath, viewModel in
-            let cell: TodoCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoCell
+        dataSource.configureCell = { _, tableView, indexPath, viewModel in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? TodoCell else {
+                return UITableViewCell()
+            }
             let cellViewModel = TodoCellViewModel(todo: viewModel) as TodoCellViewModelType
             cell.configure(viewModel: cellViewModel)
             return cell
         }
-        self.dataSource.canEditRowAtIndexPath = { _ in true }
-        self.dataSource.canMoveRowAtIndexPath = { _ in true }
-        
-        self.viewModel.isRefreshing
-            .drive(self.refreshControl.rx.isRefreshing)
-            .addDisposableTo(self.disposeBag)
-        
-        self.viewModel.sections
-            .drive(self.tableview.rx.items(dataSource: self.dataSource))
-            .addDisposableTo(self.disposeBag)
-        
-        self.addButtonItem.rx.tap
+
+        dataSource.canEditRowAtIndexPath = { _ in
+            return true
+        }
+
+        viewModel.isRefreshing
+            .drive(refreshControl.rx.isRefreshing)
+            .addDisposableTo(disposeBag)
+
+        viewModel.sections
+            .drive(tableview.rx.items(dataSource: dataSource))
+            .addDisposableTo(disposeBag)
+
+        addButtonItem.rx.tap
             .bindTo(viewModel.addButtonItemDidTap)
-            .addDisposableTo(self.disposeBag)
-        
-        self.rx.deallocated
+            .addDisposableTo(disposeBag)
+
+        rx.deallocated
             .bindTo(viewModel.viewDidDeallocate)
-            .addDisposableTo(self.disposeBag)
-        
-        self.tableview.rx.modelSelected(TodoModel.self)
+            .addDisposableTo(disposeBag)
+
+        tableview.rx.modelSelected(TodoModel.self)
             .bindTo(viewModel.itemDidSelect)
-            .addDisposableTo(self.disposeBag)
-        
+            .addDisposableTo(disposeBag)
+
+        tableview.rx.itemDeleted
+            .bindTo(viewModel.itemDeleted)
+            .addDisposableTo(disposeBag)
+
     }
-    
+
     func refreshData() {
-        self.viewModel.loadTodos()
+        viewModel.loadTodos()
     }
 }

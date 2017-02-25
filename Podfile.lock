@@ -31,6 +31,7 @@ PODS:
   - RxTest (3.2.0):
     - RxSwift (~> 3.0)
   - SnapKit (3.1.2)
+  - SVProgressHUD (2.1.2)
   - Then (2.1.0)
 
 DEPENDENCIES:
@@ -44,6 +45,7 @@ DEPENDENCIES:
   - RxSwift (~> 3.0)
   - RxTest (~> 3.0)
   - SnapKit (~> 3.1.2)
+  - SVProgressHUD
   - Then (~> 2.1)
 
 SPEC CHECKSUMS:
@@ -59,8 +61,9 @@ SPEC CHECKSUMS:
   RxSwift: 46574f70d416b7923c237195939cc488a7fbf3a0
   RxTest: 85fdd6f753e8e62635a58d37bbdd3ce7d5abbef3
   SnapKit: 12b24f569cb7c143acc9c22b9d91b23e7b1c84a2
+  SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
   Then: 8496793c8fcac95482b943909b440724c7d8d82c
 
-PODFILE CHECKSUM: 483bae426b392200b27a52fe323db64dd6391f74
+PODFILE CHECKSUM: 42dfaa1c4b5a8b38e8982f79b33938e6bb113634
 
 COCOAPODS: 1.2.0

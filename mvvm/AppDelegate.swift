@@ -8,6 +8,7 @@
 
 import UIKit
 import Moya
+import Then
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,9 +16,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        let navigationController = UINavigationController()
+
+        let navigationController = UINavigationController().then {
+            $0.navigationBar.isTranslucent = false
+        }
+
         let todoService = RxMoyaProvider<TodoService>()
-        let appCoordinator = AppCoordinator(navigationController: navigationController, todoService: todoService)
+
+        let networking = PMNetworking(todoService: todoService)
+
+        let appCoordinator = SceneCoordinator(navigationController: navigationController, networking: networking)
+
         window = UIWindow()
         window?.rootViewController = navigationController
         window?.backgroundColor = UIColor.white

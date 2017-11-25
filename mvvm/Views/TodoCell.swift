@@ -23,6 +23,8 @@ class TodoCell: UITableViewCell {
     }
 
     private func setupLayout() {
+        selectionStyle = .none
+
         contentView.addSubview(titleLabel)
 
         titleLabel.snp.makeConstraints { (maker) in

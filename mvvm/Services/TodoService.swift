@@ -13,10 +13,10 @@ import Moya
 
 enum TodoService {
     case fetchAll
-    case fetchTodo(id: Int)
+    case fetchTodo(id: UInt)
     case createTodo(todo: TodoModel)
     case updateTodo(todo: TodoModel)
-    case deleteTodo(id: Int)
+    case deleteTodo(id: UInt)
 }
 
 extension TodoService: TargetType {

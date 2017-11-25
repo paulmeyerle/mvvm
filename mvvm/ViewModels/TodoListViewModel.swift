@@ -14,130 +14,123 @@ import Moya
 import Moya_ModelMapper
 import Mapper
 
-typealias TodoListSection = SectionModel<String, TodoModel>
+typealias TodoListSection = SectionModel<String, TodoCellViewModel>
 
 protocol TodoListViewModelType {
-    // view was dealocated
-    var viewDidDeallocate: PublishSubject<Void> { get }
-
-    // User selected an item in the tableview
-    var itemDidSelect: PublishSubject<TodoModel> { get }
-    var itemDeleted: PublishSubject<IndexPath> { get }
+    // Inputs
+    var viewDidAppear: PublishSubject<Bool> { get }
     var addButtonItemDidTap: PublishSubject<Void> { get }
+    var itemDidSelect: PublishSubject<TodoCellViewModel> { get }
+    var itemDeleted: PublishSubject<IndexPath> { get }
+    var reloadTodos: PublishSubject<Void> { get }
 
-    // sections which power the tableview
-    var sections: Driver<[TodoListSection]> { get }
-
+    // Outputs
+    var isLoading: Driver<Bool> { get }
     var isRefreshing: Driver<Bool> { get }
-
-    // Fetch todos from the server
-    func loadTodos()
+    var sections: Driver<[TodoListSection]> { get }
+    var titleText: Driver<String> { get }
 }
 
 struct TodoListViewModel: TodoListViewModelType {
-    fileprivate let disposeBag = DisposeBag()
-    fileprivate let appCoordinator: AppCoordinator
-    fileprivate var todos = Variable<[TodoModel]>([TodoModel]())
+    private let disposeBag = DisposeBag()
+    private let onUpdateTrigger = PublishSubject<Void>()
 
-    var isLoading = Variable<Bool>(false)
+    // Inputs
+    public let viewDidAppear = PublishSubject<Bool>()
+    public let addButtonItemDidTap = PublishSubject<Void>()
+    public let itemDidSelect = PublishSubject<TodoCellViewModel>()
+    public let itemDeleted = PublishSubject<IndexPath>()
+    public let reloadTodos = PublishSubject<Void>()
 
-    let viewDidLoad = PublishSubject<Void>()
-    let viewDidDeallocate = PublishSubject<Void>()
-    let todoService: RxMoyaProvider<TodoService>
-    var sections: Driver<[TodoListSection]>
-    let itemDidSelect = PublishSubject<TodoModel>()
-    let itemDeleted = PublishSubject<IndexPath>()
-    let addButtonItemDidTap = PublishSubject<Void>()
-    let isRefreshing: Driver<Bool>
+    // Outputs
+    public let isLoading: Driver<Bool>
+    public let isRefreshing: Driver<Bool>
+    public let sections: Driver<[TodoListSection]>
+    public let titleText: Driver<String>
 
-    init(todoService: RxMoyaProvider<TodoService>, appCoordinator: AppCoordinator) {
-        self.todoService = todoService
-        self.appCoordinator = appCoordinator
+    init(networking: PMNetworking, sceneCoordinator: SceneCoordinator) {
+        let fetchObservable = Observable.merge([
+            viewDidAppear.map { _ in },
+            reloadTodos,
+            onUpdateTrigger
+            ])
+            .shareReplay(1)
+
+        let todosObservable = fetchObservable
+            .flatMapLatest { _ in
+                return networking.fetchTodos()
+            }
+            .shareReplay(1)
+
+        isLoading = Observable.merge([
+            viewDidAppear.map { _ in true },
+            todosObservable.map { _ in false }
+            ])
+            .asDriver(onErrorJustReturn: false)
+
+        isRefreshing = Observable.merge([
+            reloadTodos.map { true },
+            todosObservable.map { _ in false }
+            ])
+            .asDriver(onErrorJustReturn: false)
+
+        titleText = Observable.just("Beer List")
+            .asDriver(onErrorJustReturn: "Beer List")
+
+        let sectionsObservable = todosObservable
+            .map { todos -> [TodoListSection] in
+                let tastedBeers = todos
+                    .filter { $0.isDone }
+                    .map { TodoCellViewModel(todo: $0) }
+
+                let untastedBeers = todos
+                    .filter { !$0.isDone }
+                    .map { TodoCellViewModel(todo: $0) }
+
+                let tastedSection = TodoListSection(model: "Sampled", items: tastedBeers)
+                let untastedSection = TodoListSection(model: "Wish List", items: untastedBeers)
+
+                return [untastedSection, tastedSection]
+            }
+            .shareReplay(1)
+
+        sections = sectionsObservable
+            .asDriver(onErrorJustReturn: [])
 
         addButtonItemDidTap
-            .takeUntil(viewDidDeallocate)
             .subscribe(onNext: {
-                appCoordinator.addTodo()
+                let viewModel = AddTodoViewModel(networking: networking, sceneCoordinator: sceneCoordinator)
+                let scene = Scene.addTodo(viewModel: viewModel)
+                sceneCoordinator.transition(scene: scene, type: .push)
             })
             .addDisposableTo(disposeBag)
 
         itemDeleted
-            .takeUntil(viewDidDeallocate)
-            .withLatestFrom(todos.asObservable(), resultSelector: { (indexPath, todos) -> TodoModel in
-                let tastedBeers = todos.filter { $0.isDone }
-                let untastedBeers = todos.filter { !$0.isDone }
-                let group = indexPath.section == 0 ? untastedBeers : tastedBeers
-
-                return group[indexPath.row]
+            .withLatestFrom(sectionsObservable, resultSelector: { (indexPath, sections) -> UInt in
+                let sectionTodos = sections[indexPath.section]
+                let cellViewModel = sectionTodos.items[indexPath.row]
+                return cellViewModel.todo.id
             })
-            .flatMapLatest({ todo -> Observable<Response> in
-                return todoService.request(.deleteTodo(id: todo.id))
-                    .debug("delete toto")
-            })
-            .subscribe({ event in
-                switch event {
-                case .next:
-                    appCoordinator.viewTodos()
-                case .error(let error):
-                    _ = error
-                // show error?
-                default:
-                    break
-                }
+            .flatMapLatest { id -> Observable<Void> in
+                return networking.deleteTodo(id: id)
+            }
+            .subscribe(onNext: { [weak onUpdateTrigger] _ in
+                onUpdateTrigger?.onNext(Void())
             })
             .addDisposableTo(disposeBag)
 
         itemDidSelect
-            .takeUntil(viewDidDeallocate)
-            .flatMapLatest({ todo -> Observable<Response> in
-                let doneTodo = TodoModel(id: todo.id,
-                                         title: todo.title,
-                                         description: todo.description,
-                                         isDone: !todo.isDone)
-                return todoService.request(.updateTodo(todo: doneTodo))
-                    .debug()
-            })
-            .mapObject(type: TodoModel.self)
-            .subscribe({ event in
-                switch event {
-                case .next:
-                    appCoordinator.viewTodos()
-                case .error(let error):
-                    _ = error
-                // show error?
-                default:
-                    break
-                }
-            })
-            .addDisposableTo(disposeBag)
-
-        sections = todos
-            .asObservable()
-            .asDriver(onErrorJustReturn: [])
-            .flatMapLatest { todos in
-                let tastedBeers = todos.filter { $0.isDone }
-                let untastedBeers = todos.filter { !$0.isDone }
-                let tastedSection = TodoListSection(model: "tasted", items: tastedBeers)
-                let untastedSection = TodoListSection(model: "untasted", items: untastedBeers)
-
-                return .just([untastedSection, tastedSection])
+            .flatMapLatest { todoCellViewModel -> Observable<TodoModel> in
+                let todo = todoCellViewModel.todo
+                let updatedTodo = TodoModel(id: todo.id,
+                                            title: todo.title,
+                                            description: todo.description,
+                                            isDone: !todo.isDone)
+                return networking.updateTodo(todo: updatedTodo)
             }
-
-        isRefreshing = isLoading
-            .asObservable()
-            .asDriver(onErrorJustReturn: false)
-    }
-
-    func loadTodos() {
-        isLoading.value = true
-        todoService.request(.fetchAll)
-            .debug()
-            .mapArray(type: TodoModel.self)
-            .subscribe(onNext: { todos in
-                self.isLoading.value = false
-                self.todos.value = todos
+            .subscribe(onNext: { [weak onUpdateTrigger] _ in
+                onUpdateTrigger?.onNext(Void())
             })
             .addDisposableTo(disposeBag)
-
     }
 }

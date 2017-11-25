@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/TodoListViewModel.swift"
-            timestampString = "508725656.303958"
+            timestampString = "533340710.061873"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
             landmarkName = "TodoListViewModel"
             landmarkType = "14">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/TodoListViewModel.swift"
-            timestampString = "508725656.303958"
+            timestampString = "533340710.061954"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
             landmarkName = "TodoListViewModel"
             landmarkType = "14">
          </BreakpointContent>
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "508368931.948563"
+            timestampString = "533340710.062023"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "14"
@@ -58,13 +58,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/Models/TodoModel.swift"
-            timestampString = "508532333.493673"
+            timestampString = "533340710.062074"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "11"
             endingLineNumber = "11"
-            landmarkName = "TodoModel"
-            landmarkType = "14">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -74,13 +74,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/Services/TodoService.swift"
-            timestampString = "509736782.13322"
+            timestampString = "533340710.062121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "44"
             endingLineNumber = "44"
-            landmarkName = "TodoService"
-            landmarkType = "4">
+            landmarkName = "method"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -90,12 +90,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "509734621.628907"
+            timestampString = "533340710.062169"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "init(todoService:appCoordinator:)"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "init(networking:sceneCoordinator:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -106,12 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "509734621.628907"
+            timestampString = "533340710.062215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "init(todoService:appCoordinator:)"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "init(networking:sceneCoordinator:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -122,28 +122,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "509734621.628907"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "46"
-            endingLineNumber = "46"
-            landmarkName = "init(todoService:appCoordinator:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "509734621.628907"
+            timestampString = "533340710.06226"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "47"
             endingLineNumber = "47"
-            landmarkName = "init(todoService:appCoordinator:)"
+            landmarkName = "init(networking:sceneCoordinator:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -154,12 +138,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "509734621.628907"
+            timestampString = "533340710.062304"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "init(todoService:appCoordinator:)"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "init(networking:sceneCoordinator:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -169,14 +153,14 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "mvvm/ViewModels/TodoListViewModel.swift"
-            timestampString = "509736782.13322"
+            filePath = "mvvm/ViewControllers/TodoListViewController.swift"
+            timestampString = "533340710.062351"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "TodoListViewModel"
-            landmarkType = "14">
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "init(viewModel:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -185,46 +169,14 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "mvvm/ViewModels/AddTodoViewModel.swift"
-            timestampString = "509734621.628907"
+            filePath = "mvvm/ViewControllers/TodoListViewController.swift"
+            timestampString = "533340710.062664"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
-            landmarkName = "init(todoService:appCoordinator:)"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "init(viewModel:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "mvvm.AddTodoViewModel.(init (todoService : Moya.RxMoyaProvider&lt;mvvm.TodoService&gt;) -&gt; mvvm.AddTodoViewModel).(closure #3)"
-                  moduleName = "mvvm"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pmeyerle/Development/mvvm/mvvm/ViewModels/AddTodoViewModel.swift"
-                  timestampString = "508727786.190815"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "55"
-                  endingLineNumber = "55"
-                  offsetFromSymbolStart = "1206">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "mvvm.AddTodoViewModel.(init (todoService : Moya.RxMoyaProvider&lt;mvvm.TodoService&gt;) -&gt; mvvm.AddTodoViewModel).(closure #3).(closure #1)"
-                  moduleName = "mvvm"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pmeyerle/Development/mvvm/mvvm/ViewModels/AddTodoViewModel.swift"
-                  timestampString = "508727786.192552"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "56"
-                  endingLineNumber = "56"
-                  offsetFromSymbolStart = "23">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

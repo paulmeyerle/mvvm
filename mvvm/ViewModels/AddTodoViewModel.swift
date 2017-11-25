@@ -12,18 +12,18 @@ import RxCocoa
 import Moya
 
 protocol AddTodoViewModelType {
-    var viewDidDeallocate: PublishSubject<Void> { get }
+    // Inputs
     var saveButtonItemDidTap: PublishSubject<Void> { get }
-
     var title: Variable<String?> { get set }
     var description: Variable<String?> { get set }
+
+    // Outputs
     var isValid: Driver<Bool> { get }
+    var titleText: Driver<String> { get }
 }
 
 struct AddTodoViewModel: AddTodoViewModelType {
-    fileprivate let disposeBag = DisposeBag()
-    fileprivate let todoService: RxMoyaProvider<TodoService>
-    fileprivate let appCoordinator: AppCoordinator
+    private let disposeBag = DisposeBag()
 
     let saveButtonItemDidTap = PublishSubject<Void>()
     let viewDidDeallocate = PublishSubject<Void>()
@@ -31,11 +31,9 @@ struct AddTodoViewModel: AddTodoViewModelType {
     var title = Variable<String?>("")
     var description = Variable<String?>("")
     var isValid: Driver<Bool>
+    var titleText: Driver<String>
 
-    init(todoService: RxMoyaProvider<TodoService>, appCoordinator: AppCoordinator) {
-        self.todoService = todoService
-        self.appCoordinator = appCoordinator
-
+    init(networking: PMNetworking, sceneCoordinator: SceneCoordinator) {
         isValid = title
             .asObservable()
             .map { text in text?.isEmpty == false }
@@ -43,28 +41,20 @@ struct AddTodoViewModel: AddTodoViewModelType {
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
 
+        titleText = Observable.just("Add a Beer")
+            .asDriver(onErrorJustReturn: "Add a Beer")
+
         let formData = Observable.combineLatest(title.asObservable(), description.asObservable()) { ($0, $1) }
 
         saveButtonItemDidTap
-            .takeUntil(viewDidDeallocate)
             .withLatestFrom(formData)
-            .flatMapLatest({ (title, description) -> Observable<Response> in
+            .flatMapLatest { (title, description) -> Observable<TodoModel> in
                 let todo = TodoModel(title: title!, description: description!)
-                return todoService.request(.createTodo(todo: todo))
-                    .debug("create user")
-            })
-            .mapObject(type: TodoModel.self)
-            .subscribe { event in
-                switch event {
-                case .next:
-                    appCoordinator.viewTodos()
-                case .error(let error):
-                    _ = error
-                    // show error?
-                default:
-                    break
-                }
+                return networking.addTodo(todo: todo)
             }
+            .subscribe(onNext: { _ in
+                sceneCoordinator.pop()
+            })
             .addDisposableTo(disposeBag)
     }
 }

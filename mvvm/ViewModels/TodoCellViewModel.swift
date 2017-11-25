@@ -16,12 +16,13 @@ protocol TodoCellViewModelType {
 }
 
 struct TodoCellViewModel: TodoCellViewModelType {
-
+    let todo: TodoModel
     let title: String
     let titleColor: UIColor
     let accessoryType: UITableViewCellAccessoryType
 
     init(todo: TodoModel) {
+        self.todo = todo
         title = todo.title
         titleColor = todo.isDone ? .lightGray : .black
         accessoryType = todo.isDone ? .checkmark : .none

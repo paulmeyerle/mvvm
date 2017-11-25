@@ -13,60 +13,87 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-class TodoListViewController: BaseViewController {
+class TodoListViewController: UIViewController {
 
-    let refreshControl = UIRefreshControl()
+    private let refreshControl = UIRefreshControl()
 
-    let tableview = UITableView().then {
+    private let tableview = UITableView().then {
         $0.register(TodoCell.self, forCellReuseIdentifier: "cell")
         $0.estimatedRowHeight = 50.0
         $0.rowHeight = UITableViewAutomaticDimension
         $0.tableFooterView = UIView()
     }
 
-    let disposeBag = DisposeBag()
-    let viewModel: TodoListViewModelType
-    let dataSource = RxTableViewSectionedReloadDataSource<TodoListSection>()
-    let addButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
+    private let disposeBag = DisposeBag()
+
+    private let viewModel: TodoListViewModelType
+
+    private let dataSource = RxTableViewSectionedReloadDataSource<TodoListSection>()
+
+    private let addButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
+
+    private let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray).then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
 
     init(viewModel: TodoListViewModelType) {
         self.viewModel = viewModel
-        super.init()
+        super.init(nibName: nil, bundle: nil)
 
-        navigationItem.title = "Beer Wishlist"
-        navigationItem.rightBarButtonItem = addButtonItem
+        configure()
+        setupLayout()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupLayout()
-        configure()
-        refreshData()
-    }
-
     private func setupLayout() {
-        refreshControl.addTarget(self, action: #selector(TodoListViewController.refreshData), for: .valueChanged)
+        view.backgroundColor = .white
+        navigationItem.rightBarButtonItem = addButtonItem
 
         tableview.addSubview(refreshControl)
+
+        tableview.addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints { maker in
+            maker.center.equalToSuperview()
+        }
+
         view.addSubview(tableview)
+
         tableview.snp.makeConstraints { (maker) in
             maker.edges.equalToSuperview()
         }
     }
 
     private func configure() {
+        addButtonItem.rx.tap
+            .bind(to: viewModel.addButtonItemDidTap)
+            .addDisposableTo(disposeBag)
+
+        rx.viewDidAppear
+            .bind(to: viewModel.viewDidAppear)
+            .addDisposableTo(disposeBag)
+
+        tableview.rx.modelSelected(TodoCellViewModel.self)
+            .bind(to: viewModel.itemDidSelect)
+            .addDisposableTo(disposeBag)
+
+        tableview.rx.itemDeleted
+            .bind(to: viewModel.itemDeleted)
+            .addDisposableTo(disposeBag)
+
+        refreshControl.rx.controlEvent(.valueChanged)
+            .bind(to: viewModel.reloadTodos)
+            .addDisposableTo(disposeBag)
+
         // Bind View Model
         dataSource.configureCell = { _, tableView, indexPath, viewModel in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? TodoCell else {
                 return UITableViewCell()
             }
-            let cellViewModel = TodoCellViewModel(todo: viewModel) as TodoCellViewModelType
-            cell.configure(viewModel: cellViewModel)
+
+            cell.configure(viewModel: viewModel)
             return cell
         }
 
@@ -74,33 +101,24 @@ class TodoListViewController: BaseViewController {
             return true
         }
 
+        dataSource.titleForHeaderInSection = { ds, index in
+            return ds.sectionModels[index].model
+        }
+
+        viewModel.titleText
+            .drive(rx.title)
+            .addDisposableTo(disposeBag)
+
         viewModel.isRefreshing
             .drive(refreshControl.rx.isRefreshing)
+            .addDisposableTo(disposeBag)
+
+        viewModel.isLoading
+            .drive(activityIndicator.rx.isAnimating)
             .addDisposableTo(disposeBag)
 
         viewModel.sections
             .drive(tableview.rx.items(dataSource: dataSource))
             .addDisposableTo(disposeBag)
-
-        addButtonItem.rx.tap
-            .bindTo(viewModel.addButtonItemDidTap)
-            .addDisposableTo(disposeBag)
-
-        rx.deallocated
-            .bindTo(viewModel.viewDidDeallocate)
-            .addDisposableTo(disposeBag)
-
-        tableview.rx.modelSelected(TodoModel.self)
-            .bindTo(viewModel.itemDidSelect)
-            .addDisposableTo(disposeBag)
-
-        tableview.rx.itemDeleted
-            .bindTo(viewModel.itemDeleted)
-            .addDisposableTo(disposeBag)
-
-    }
-
-    func refreshData() {
-        viewModel.loadTodos()
     }
 }

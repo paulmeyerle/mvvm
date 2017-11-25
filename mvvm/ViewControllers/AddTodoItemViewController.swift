@@ -9,7 +9,7 @@
 import UIKit
 import RxSwift
 
-class AddTodoItemViewController: BaseViewController {
+class AddTodoItemViewController: UIViewController {
 
     fileprivate let disposeBag = DisposeBag()
 
@@ -34,21 +34,19 @@ class AddTodoItemViewController: BaseViewController {
 
     init(viewModel: AddTodoViewModelType) {
         self.viewModel = viewModel
-        super.init()
+        super.init(nibName: nil, bundle: nil)
+
+        configure()
+        setupLayout()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationItem.title = "Add a Beer"
-        setupLayout()
-        configure()
-    }
-
     private func setupLayout() {
+        view.backgroundColor = .white
+
         view.addSubview(stackView)
         stackView.snp.makeConstraints { maker in
             maker.edges.equalToSuperview().inset(20)
@@ -65,15 +63,19 @@ class AddTodoItemViewController: BaseViewController {
 
     private func configure() {
         titleInput.rx.text
-            .bindTo(viewModel.title)
+            .bind(to: viewModel.title)
             .addDisposableTo(disposeBag)
 
         saveButton.rx.tap
-            .bindTo(viewModel.saveButtonItemDidTap)
+            .bind(to: viewModel.saveButtonItemDidTap)
             .addDisposableTo(disposeBag)
 
         viewModel.isValid
             .drive(saveButton.rx.isEnabled)
+            .addDisposableTo(disposeBag)
+
+        viewModel.titleText
+            .drive(rx.title)
             .addDisposableTo(disposeBag)
     }
 

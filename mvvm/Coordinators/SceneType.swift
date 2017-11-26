@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Scene {
+enum SceneType {
     case viewTodos(viewModel: TodoListViewModelType)
     case addTodo(viewModel: AddTodoViewModelType)
 }

@@ -13,7 +13,7 @@ protocol SceneCoordinatorType {
     func start()
 
     /// Transition to another scene within the application
-    func transition(scene: Scene, type: SceneTransitionType)
+    func transition(scene: SceneType, type: SceneTransitionType)
 
     /// Pop the visible view controller from the stack
     func pop()

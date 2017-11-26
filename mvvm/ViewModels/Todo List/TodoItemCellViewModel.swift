@@ -9,13 +9,7 @@
 import RxCocoa
 import RxSwift
 
-protocol TodoCellViewModelType {
-    var title: String { get }
-    var titleColor: UIColor { get }
-    var accessoryType: UITableViewCellAccessoryType { get }
-}
-
-struct TodoCellViewModel: TodoCellViewModelType {
+struct TodoItemCellViewModel: TodoItemCellViewModelType {
     let todo: TodoModel
     let title: String
     let titleColor: UIColor

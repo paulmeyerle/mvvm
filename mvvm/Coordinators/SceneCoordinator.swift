@@ -19,7 +19,7 @@ class SceneCoordinator: SceneCoordinatorType {
         self.networking = networking
     }
 
-    public func transition(scene: Scene, type: SceneTransitionType) {
+    public func transition(scene: SceneType, type: SceneTransitionType) {
         // first we need to get the view controller
         let viewController = buildViewController(scene: scene)
 
@@ -49,7 +49,7 @@ class SceneCoordinator: SceneCoordinatorType {
         }
     }
 
-    private func buildViewController(scene: Scene) -> UIViewController {
+    private func buildViewController(scene: SceneType) -> UIViewController {
         switch scene {
         case .addTodo(let viewModel):
             return AddTodoItemViewController(viewModel: viewModel)
@@ -60,6 +60,6 @@ class SceneCoordinator: SceneCoordinatorType {
 
     public func start() {
         let viewModel = TodoListViewModel(networking: networking, sceneCoordinator: self)
-        transition(scene: Scene.viewTodos(viewModel: viewModel), type: .root)
+        transition(scene: SceneType.viewTodos(viewModel: viewModel), type: .root)
     }
 }

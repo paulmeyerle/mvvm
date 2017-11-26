@@ -18,7 +18,7 @@ class TodoListViewController: UIViewController {
     private let refreshControl = UIRefreshControl()
 
     private let tableview = UITableView().then {
-        $0.register(TodoCell.self, forCellReuseIdentifier: "cell")
+        $0.register(TodoItemCellView.self, forCellReuseIdentifier: "cell")
         $0.estimatedRowHeight = 50.0
         $0.rowHeight = UITableViewAutomaticDimension
         $0.tableFooterView = UIView()
@@ -75,7 +75,7 @@ class TodoListViewController: UIViewController {
             .bind(to: viewModel.viewDidAppear)
             .addDisposableTo(disposeBag)
 
-        tableview.rx.modelSelected(TodoCellViewModel.self)
+        tableview.rx.modelSelected(TodoItemCellViewModel.self)
             .bind(to: viewModel.itemDidSelect)
             .addDisposableTo(disposeBag)
 
@@ -89,7 +89,8 @@ class TodoListViewController: UIViewController {
 
         // Bind View Model
         dataSource.configureCell = { _, tableView, indexPath, viewModel in
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? TodoCell else {
+            // swiftlint:disable:next line_length
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? TodoItemCellView else {
                 return UITableViewCell()
             }
 
@@ -101,8 +102,8 @@ class TodoListViewController: UIViewController {
             return true
         }
 
-        dataSource.titleForHeaderInSection = { ds, index in
-            return ds.sectionModels[index].model
+        dataSource.titleForHeaderInSection = { (dataSource, index) in
+            return dataSource.sectionModels[index].model
         }
 
         viewModel.titleText

@@ -11,25 +11,22 @@ import RxSwift
 
 class AddTodoItemViewController: UIViewController {
 
-    fileprivate let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
 
-    let viewModel: AddTodoViewModelType
+    private let viewModel: AddTodoViewModelType
 
-    let stackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 20
-    }
-
-    let titleInput = UITextField().then {
+    private let titleInput = UITextField().then {
         $0.placeholder = "Beer Name"
         $0.borderStyle = .roundedRect
+        $0.font = .preferredFont(forTextStyle: .title3)
     }
 
-    let saveButton = UIButton().then {
+    private let saveButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.setTitle("Save", for: .normal)
         $0.backgroundColor = .orange
         $0.layer.cornerRadius = 5
+        $0.titleLabel?.font = .preferredFont(forTextStyle: .title3)
     }
 
     init(viewModel: AddTodoViewModelType) {
@@ -47,18 +44,20 @@ class AddTodoItemViewController: UIViewController {
     private func setupLayout() {
         view.backgroundColor = .white
 
+        let stackView = UIStackView(arrangedSubviews: [titleInput, saveButton]) .then {
+            $0.axis = .vertical
+            $0.spacing = 20
+        }
+
         view.addSubview(stackView)
         stackView.snp.makeConstraints { maker in
-            maker.edges.equalToSuperview().inset(20)
+            maker.left.top.right.equalToSuperview()
+                .inset(20)
         }
 
         titleInput.snp.makeConstraints { maker in
-            maker.height.equalTo(30)
+            maker.height.equalTo(50)
         }
-
-        stackView.addArrangedSubview(titleInput)
-        stackView.addArrangedSubview(saveButton)
-        stackView.addArrangedSubview(UIView())
     }
 
     private func configure() {
@@ -78,5 +77,4 @@ class AddTodoItemViewController: UIViewController {
             .drive(rx.title)
             .addDisposableTo(disposeBag)
     }
-
 }

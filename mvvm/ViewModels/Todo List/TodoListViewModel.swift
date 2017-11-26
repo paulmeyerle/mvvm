@@ -14,31 +14,14 @@ import Moya
 import Moya_ModelMapper
 import Mapper
 
-typealias TodoListSection = SectionModel<String, TodoCellViewModel>
-
-protocol TodoListViewModelType {
-    // Inputs
-    var viewDidAppear: PublishSubject<Bool> { get }
-    var addButtonItemDidTap: PublishSubject<Void> { get }
-    var itemDidSelect: PublishSubject<TodoCellViewModel> { get }
-    var itemDeleted: PublishSubject<IndexPath> { get }
-    var reloadTodos: PublishSubject<Void> { get }
-
-    // Outputs
-    var isLoading: Driver<Bool> { get }
-    var isRefreshing: Driver<Bool> { get }
-    var sections: Driver<[TodoListSection]> { get }
-    var titleText: Driver<String> { get }
-}
-
 struct TodoListViewModel: TodoListViewModelType {
     private let disposeBag = DisposeBag()
-    private let onUpdateTrigger = PublishSubject<Void>()
+    private let onItemChangeTrigger = PublishSubject<Void>()
 
     // Inputs
     public let viewDidAppear = PublishSubject<Bool>()
     public let addButtonItemDidTap = PublishSubject<Void>()
-    public let itemDidSelect = PublishSubject<TodoCellViewModel>()
+    public let itemDidSelect = PublishSubject<TodoItemCellViewModel>()
     public let itemDeleted = PublishSubject<IndexPath>()
     public let reloadTodos = PublishSubject<Void>()
 
@@ -48,11 +31,12 @@ struct TodoListViewModel: TodoListViewModelType {
     public let sections: Driver<[TodoListSection]>
     public let titleText: Driver<String>
 
+    // swiftlint:disable:next function_body_length
     init(networking: PMNetworking, sceneCoordinator: SceneCoordinator) {
         let fetchObservable = Observable.merge([
             viewDidAppear.map { _ in },
             reloadTodos,
-            onUpdateTrigger
+            onItemChangeTrigger
             ])
             .shareReplay(1)
 
@@ -81,11 +65,11 @@ struct TodoListViewModel: TodoListViewModelType {
             .map { todos -> [TodoListSection] in
                 let tastedBeers = todos
                     .filter { $0.isDone }
-                    .map { TodoCellViewModel(todo: $0) }
+                    .map { TodoItemCellViewModel(todo: $0) }
 
                 let untastedBeers = todos
                     .filter { !$0.isDone }
-                    .map { TodoCellViewModel(todo: $0) }
+                    .map { TodoItemCellViewModel(todo: $0) }
 
                 let tastedSection = TodoListSection(model: "Sampled", items: tastedBeers)
                 let untastedSection = TodoListSection(model: "Wish List", items: untastedBeers)
@@ -100,7 +84,7 @@ struct TodoListViewModel: TodoListViewModelType {
         addButtonItemDidTap
             .subscribe(onNext: {
                 let viewModel = AddTodoViewModel(networking: networking, sceneCoordinator: sceneCoordinator)
-                let scene = Scene.addTodo(viewModel: viewModel)
+                let scene = SceneType.addTodo(viewModel: viewModel)
                 sceneCoordinator.transition(scene: scene, type: .push)
             })
             .addDisposableTo(disposeBag)
@@ -114,8 +98,8 @@ struct TodoListViewModel: TodoListViewModelType {
             .flatMapLatest { id -> Observable<Void> in
                 return networking.deleteTodo(id: id)
             }
-            .subscribe(onNext: { [weak onUpdateTrigger] _ in
-                onUpdateTrigger?.onNext(Void())
+            .subscribe(onNext: { [weak onItemChangeTrigger] _ in
+                onItemChangeTrigger?.onNext(Void())
             })
             .addDisposableTo(disposeBag)
 
@@ -128,8 +112,8 @@ struct TodoListViewModel: TodoListViewModelType {
                                             isDone: !todo.isDone)
                 return networking.updateTodo(todo: updatedTodo)
             }
-            .subscribe(onNext: { [weak onUpdateTrigger] _ in
-                onUpdateTrigger?.onNext(Void())
+            .subscribe(onNext: { [weak onItemChangeTrigger] _ in
+                onItemChangeTrigger?.onNext(Void())
             })
             .addDisposableTo(disposeBag)
     }

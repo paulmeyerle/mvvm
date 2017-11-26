@@ -7,10 +7,15 @@
 //
 
 import UIKit
+import Then
+import SnapKit
 
-class TodoCell: UITableViewCell {
+class TodoItemCellView: UITableViewCell {
 
-    let titleLabel = UILabel()
+    private let titleLabel = UILabel().then {
+        $0.font = .preferredFont(forTextStyle: .body)
+        $0.numberOfLines = 0
+    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -28,11 +33,12 @@ class TodoCell: UITableViewCell {
         contentView.addSubview(titleLabel)
 
         titleLabel.snp.makeConstraints { (maker) in
-            maker.edges.equalToSuperview().inset(15)
+            maker.edges.equalToSuperview()
+                .inset(15)
         }
     }
 
-    func configure(viewModel: TodoCellViewModelType) {
+    public func configure(viewModel: TodoItemCellViewModelType) {
         titleLabel.text = viewModel.title
         titleLabel.textColor = viewModel.titleColor
         accessoryType = viewModel.accessoryType

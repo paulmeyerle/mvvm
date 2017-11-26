@@ -71,14 +71,18 @@ extension TodoService: TargetType {
     var sampleData: Data {
         switch self {
         case .fetchAll:
+            // swiftlint:disable:next line_length
             return "[{\"id\": 1, \"title\": \"Write TODO\", \"description\": \"test description\", \"isDone\": 1}]".data(using: .utf8)!
         case .fetchTodo(let id):
+            // swiftlint:disable:next line_length
             return "{\"id\": \(id), \"title\": \"Write TODO\", \"description\": \"test description\", \"isDone\": 1}".data(using: .utf8)!
         case .createTodo(let todo):
+            // swiftlint:disable:next line_length
             return "{\"id\": 100, \"title\": \"\(todo.title)\", \"description\": \"\(todo.description)\", \"isDone\": \(todo.isDone)}".data(using: .utf8)!
         case .updateTodo(let todo):
+            // swiftlint:disable:next line_length
             return "{\"id\": \(todo.id), \"title\": \"\(todo.title)\", \"description\": \"\(todo.description)\", \"isDone\": \(todo.isDone)}".data(using: .utf8)!
-        case .deleteTodo(let id):
+        case .deleteTodo(_):
             return "{}".data(using: .utf8)!
         }
     }

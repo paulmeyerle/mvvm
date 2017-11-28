@@ -33,7 +33,7 @@ struct AddTodoViewModel: AddTodoViewModelType {
     var isValid: Driver<Bool>
     var titleText: Driver<String>
 
-    init(networking: PMNetworking, sceneCoordinator: SceneCoordinator) {
+    init(networking: NetworkProvider, sceneCoordinator: SceneCoordinator) {
         isValid = title
             .asObservable()
             .map { text in text?.isEmpty == false }
@@ -41,8 +41,8 @@ struct AddTodoViewModel: AddTodoViewModelType {
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
 
-        titleText = Observable.just("Add a Beer")
-            .asDriver(onErrorJustReturn: "Add a Beer")
+        titleText = Observable.just("Add a Todo Item")
+            .asDriver(onErrorJustReturn: "Add a Todo Item")
 
         let formData = Observable.combineLatest(title.asObservable(), description.asObservable()) { ($0, $1) }
 

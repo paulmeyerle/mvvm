@@ -19,8 +19,8 @@
 		125CA06A1FCB31E20063DED4 /* TodoItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA0691FCB31E20063DED4 /* TodoItemCellView.swift */; };
 		125CA06D1FCB32000063DED4 /* TodoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA06B1FCB32000063DED4 /* TodoListViewController.swift */; };
 		125CA06E1FCB32000063DED4 /* AddTodoItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA06C1FCB32000063DED4 /* AddTodoItemViewController.swift */; };
-		125CA0721FCB32110063DED4 /* PMNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA06F1FCB32110063DED4 /* PMNetworking.swift */; };
-		125CA0731FCB32110063DED4 /* PMNetworkingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA0701FCB32110063DED4 /* PMNetworkingType.swift */; };
+		125CA0721FCB32110063DED4 /* NetworkProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA06F1FCB32110063DED4 /* NetworkProvider.swift */; };
+		125CA0731FCB32110063DED4 /* NetworkProviderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA0701FCB32110063DED4 /* NetworkProviderType.swift */; };
 		125CA0741FCB32110063DED4 /* TodoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA0711FCB32110063DED4 /* TodoService.swift */; };
 		125CA0761FCB32240063DED4 /* TodoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA0751FCB32240063DED4 /* TodoModel.swift */; };
 		125CA07B1FCB32370063DED4 /* SceneTransitionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125CA0771FCB32370063DED4 /* SceneTransitionType.swift */; };
@@ -70,8 +70,8 @@
 		125CA0691FCB31E20063DED4 /* TodoItemCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoItemCellView.swift; sourceTree = "<group>"; };
 		125CA06B1FCB32000063DED4 /* TodoListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoListViewController.swift; sourceTree = "<group>"; };
 		125CA06C1FCB32000063DED4 /* AddTodoItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTodoItemViewController.swift; sourceTree = "<group>"; };
-		125CA06F1FCB32110063DED4 /* PMNetworking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PMNetworking.swift; sourceTree = "<group>"; };
-		125CA0701FCB32110063DED4 /* PMNetworkingType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PMNetworkingType.swift; sourceTree = "<group>"; };
+		125CA06F1FCB32110063DED4 /* NetworkProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
+		125CA0701FCB32110063DED4 /* NetworkProviderType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkProviderType.swift; sourceTree = "<group>"; };
 		125CA0711FCB32110063DED4 /* TodoService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoService.swift; sourceTree = "<group>"; };
 		125CA0751FCB32240063DED4 /* TodoModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoModel.swift; sourceTree = "<group>"; };
 		125CA0771FCB32370063DED4 /* SceneTransitionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneTransitionType.swift; sourceTree = "<group>"; };
@@ -208,8 +208,8 @@
 		1254D38A1E4CC79F00CA34B6 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				125CA06F1FCB32110063DED4 /* PMNetworking.swift */,
-				125CA0701FCB32110063DED4 /* PMNetworkingType.swift */,
+				125CA06F1FCB32110063DED4 /* NetworkProvider.swift */,
+				125CA0701FCB32110063DED4 /* NetworkProviderType.swift */,
 				125CA0711FCB32110063DED4 /* TodoService.swift */,
 			);
 			path = Services;
@@ -584,7 +584,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				125CA0721FCB32110063DED4 /* PMNetworking.swift in Sources */,
+				125CA0721FCB32110063DED4 /* NetworkProvider.swift in Sources */,
 				125CA0761FCB32240063DED4 /* TodoModel.swift in Sources */,
 				125CA0741FCB32110063DED4 /* TodoService.swift in Sources */,
 				125CA0641FCB313C0063DED4 /* TodoItemCellViewModel.swift in Sources */,
@@ -597,7 +597,7 @@
 				125CA06E1FCB32000063DED4 /* AddTodoItemViewController.swift in Sources */,
 				125CA0861FCB332A0063DED4 /* TodoItemCellViewModelType.swift in Sources */,
 				125CA07E1FCB32370063DED4 /* SceneCoordinatorType.swift in Sources */,
-				125CA0731FCB32110063DED4 /* PMNetworkingType.swift in Sources */,
+				125CA0731FCB32110063DED4 /* NetworkProviderType.swift in Sources */,
 				125CA07B1FCB32370063DED4 /* SceneTransitionType.swift in Sources */,
 				125CA05E1FCA0A1F0063DED4 /* UIViewController+Rx.swift in Sources */,
 				125CA06D1FCB32000063DED4 /* TodoListViewController.swift in Sources */,

@@ -9,7 +9,7 @@
 import Foundation
 import RxSwift
 
-protocol PMNetworkingType {
+protocol NetworkProviderType {
     func fetchTodos() -> Observable<[TodoModel]>
     func addTodo(todo: TodoModel) -> Observable<TodoModel>
     func updateTodo(todo: TodoModel) -> Observable<TodoModel>

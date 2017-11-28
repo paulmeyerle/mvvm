@@ -32,7 +32,7 @@ struct TodoListViewModel: TodoListViewModelType {
     public let titleText: Driver<String>
 
     // swiftlint:disable:next function_body_length
-    init(networking: PMNetworking, sceneCoordinator: SceneCoordinator) {
+    init(networking: NetworkProvider, sceneCoordinator: SceneCoordinator) {
         let fetchObservable = Observable.merge([
             viewDidAppear.map { _ in },
             reloadTodos,
@@ -58,8 +58,8 @@ struct TodoListViewModel: TodoListViewModelType {
             ])
             .asDriver(onErrorJustReturn: false)
 
-        titleText = Observable.just("Beer List")
-            .asDriver(onErrorJustReturn: "Beer List")
+        titleText = Observable.just("Todos")
+            .asDriver(onErrorJustReturn: "Todos")
 
         let sectionsObservable = todosObservable
             .map { todos -> [TodoListSection] in

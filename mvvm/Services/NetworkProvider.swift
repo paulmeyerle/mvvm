@@ -12,7 +12,7 @@ import RxSwift
 import Moya
 import Moya_ModelMapper
 
-struct PMNetworking: PMNetworkingType {
+struct NetworkProvider: NetworkProviderType {
     private let todoService: RxMoyaProvider<TodoService>
 
     init(todoService: RxMoyaProvider<TodoService>) {

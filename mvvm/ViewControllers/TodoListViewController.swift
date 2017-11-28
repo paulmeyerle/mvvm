@@ -102,10 +102,6 @@ class TodoListViewController: UIViewController {
             return true
         }
 
-        dataSource.titleForHeaderInSection = { (dataSource, index) in
-            return dataSource.sectionModels[index].model
-        }
-
         viewModel.titleText
             .drive(rx.title)
             .addDisposableTo(disposeBag)

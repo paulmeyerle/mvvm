@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let todoService = RxMoyaProvider<TodoService>()
 
-        let networking = PMNetworking(todoService: todoService)
+        let networking = NetworkProvider(todoService: todoService)
 
         let appCoordinator = SceneCoordinator(navigationController: navigationController, networking: networking)
 

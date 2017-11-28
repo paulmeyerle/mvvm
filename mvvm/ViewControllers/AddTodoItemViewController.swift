@@ -16,7 +16,7 @@ class AddTodoItemViewController: UIViewController {
     private let viewModel: AddTodoViewModelType
 
     private let titleInput = UITextField().then {
-        $0.placeholder = "Beer Name"
+        $0.placeholder = "Task"
         $0.borderStyle = .roundedRect
         $0.font = .preferredFont(forTextStyle: .title3)
     }

@@ -12,9 +12,9 @@ import Moya
 
 class SceneCoordinator: SceneCoordinatorType {
     let navigationController: UINavigationController
-    let networking: PMNetworking
+    let networking: NetworkProvider
 
-    init(navigationController: UINavigationController, networking: PMNetworking) {
+    init(navigationController: UINavigationController, networking: NetworkProvider) {
         self.navigationController = navigationController
         self.networking = networking
     }
